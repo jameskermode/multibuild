@@ -5,9 +5,12 @@ set -e
 if [ "$PLAT" == "arm64" ] || [ "$PLAT" == "universal2" ]; then
   if [[ "$(xcrun --sdk macosx --show-sdk-version | cut -d '.' -f 1)" -lt 11 ]]; then
     latestXcode=$(ls /Applications | grep Xcode[_0-9\.]*\.app | sort -V | tail -n 1)
+    xcode-select -p
+    echo latestXcode=$latestXcode
     if ([ "$GITHUB_WORKFLOW" != "" ] || [ "$PIPELINE_WORKSPACE" != "" ]) && [ $latestXcode ]; then
       sudo xcode-select -switch /Applications/$latestXcode
     fi
+    xcode-select -p
     if [[ "$(xcrun --sdk macosx --show-sdk-version | cut -d '.' -f 1)" -lt 11 ]]; then
       echo "Need SDK>=11 for arm64 builds. Please run xcode-select to select a newer SDK"
       exit 1
